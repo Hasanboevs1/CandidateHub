@@ -41,8 +41,16 @@ public class Repository<T> : IRepository<T> where T : class
     public virtual async ValueTask<T> GetAsync(Expression<Func<T, bool>> expression, bool isTracking = true, string[] includes = null) =>
         await GetAll(expression, includes, isTracking).FirstOrDefaultAsync();
 
-    public async ValueTask<T> CreateAsync(T entity) =>
-        (await _context.AddAsync(entity)).Entity;
+    public async ValueTask<T> CreateAsync(T entity)
+    {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity), "Cannot add a null entity to the database");
+
+        var result = (await _dbSet.AddAsync(entity)).Entity;
+        await _context.SaveChangesAsync();
+
+        return result;
+    }
 
     public async ValueTask<bool> DeleteAsync(long id)
     {
@@ -54,12 +62,21 @@ public class Repository<T> : IRepository<T> where T : class
         }
 
         _dbSet.Remove(entity);
+        await _context.SaveChangesAsync();
 
         return true;
     }
 
-    public T Update(T entity) =>
-        _dbSet.Update(entity).Entity;
+    public T Update(T entity)
+    {
+        if (entity == null)
+            throw new ArgumentNullException(nameof(entity), "Cannot update a null entity");
+
+        var updatedEntity = _dbSet.Update(entity).Entity;
+        _context.SaveChanges(); 
+
+        return updatedEntity;
+    }
 
     public async ValueTask SaveChangesAsync() =>
         await _context.SaveChangesAsync();

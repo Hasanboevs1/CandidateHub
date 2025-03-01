@@ -1,5 +1,6 @@
-﻿using CandidateHub.Api.Models;
-using CandidateHub.Service.Exceptions;
+﻿using CandidateHub.Service.Exceptions;
+using System.Net;
+using System.Text.Json;
 
 namespace CandidateHub.Api.Middlewares;
 
@@ -22,22 +23,22 @@ public class ExceptionHandlerMiddleWare
         }
         catch (CustomException ex)
         {
-            context.Response.StatusCode = ex.StatusCode;
-            await context.Response.WriteAsJsonAsync(new Response
-            {
-                Code = ex.StatusCode,
-                Message = ex.Message
-            });
+            _logger.LogError(ex, "Custom exception occurred: {Message}", ex.Message);
+            await HandleExceptionAsync(context, ex.StatusCode, ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"{ex}\n\n");
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new Response
-            {
-                Code = 500,
-                Message = ex.Message
-            });
+            _logger.LogError(ex, "An unexpected error occurred: {Message}", ex.Message);
+            await HandleExceptionAsync(context, (int)HttpStatusCode.InternalServerError, "An unexpected error occurred.");
         }
+    }
+
+    private static Task HandleExceptionAsync(HttpContext context, int statusCode, string message)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+
+        var response = new { StatusCode = statusCode, Message = message };
+        return context.Response.WriteAsync(JsonSerializer.Serialize(response));
     }
 }

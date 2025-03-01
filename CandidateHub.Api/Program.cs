@@ -1,4 +1,5 @@
 using CandidateHub.Api.Extensions;
+using CandidateHub.Api.Middlewares;
 using CandidateHub.Data.Contexts;
 using CandidateHub.Service.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 
 using (var scope = app.Services.CreateScope())
 {
