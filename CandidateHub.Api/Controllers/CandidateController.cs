@@ -3,6 +3,7 @@ using CandidateHub.Service.DTOs.Candidate;
 using CandidateHub.Service.Exceptions;
 using CandidateHub.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace CandidateHub.Api.Controllers;
@@ -11,6 +12,7 @@ namespace CandidateHub.Api.Controllers;
 /// </summary>
 [Route("api/candidates")]
 [ApiController]
+[EnableRateLimiting("default")]
 public class CandidateController : ControllerBase
 {
     private readonly ICandidateService _candidateService;

@@ -28,6 +28,7 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddSwaggerDoc();
 builder.Services.AddMemoryCache();
 builder.Services.AddCustomHealthChecks();
+builder.Services.CustomRateLimiterService();
 
 var app = builder.Build();
 
@@ -36,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -45,6 +46,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
+app.UseMiddleware<RateLimitingMiddleware>();
 
 using (var scope = app.Services.CreateScope())
 {
