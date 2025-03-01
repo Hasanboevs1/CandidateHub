@@ -1,5 +1,6 @@
 using CandidateHub.Api.Extensions;
 using CandidateHub.Data.Contexts;
+using CandidateHub.Service.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCustomContext();
 
 builder.Services.AddCustomServices();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 
