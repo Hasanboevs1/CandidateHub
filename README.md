@@ -172,7 +172,3 @@ This project follows clean architecture, best practices, and industry standards 
 2️⃣ Create a feature branch.
 3️⃣ Make changes and push.
 4️⃣ Create a pull request.
-
-📄 License
-
-This project is licensed under the MIT License.
