@@ -2,7 +2,9 @@
 using CandidateHub.Data.Repositories;
 using CandidateHub.Domain.Entities;
 using CandidateHub.Service.DTOs.Candidate;
+using CandidateHub.Service.Exceptions;
 using CandidateHub.Service.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CandidateHub.Service.Services;
 
@@ -13,29 +15,54 @@ public class CandidateService : ICandidateService
     public CandidateService(IRepository<Candidate> candidateRepository, IMapper mapper) =>
         (_candidateRepository, _mapper) = (candidateRepository, mapper);
 
-
-    public async ValueTask<CandidateDto> CreateProductAsync(CandidateCreateDto product)
+    public async ValueTask<CandidateDto> CreateCandidateAsync(CandidateCreateDto dto)
     {
-        throw new NotImplementedException();
+        var model = await _candidateRepository.GetAll(null!)
+            .FirstOrDefaultAsync(x => x.Email.ToLower() == dto.Email.ToLower());
+
+        if (model != null)
+            throw new CustomException(409, "candidate_already_exist");
+
+        var mappedModel = _mapper.Map<Candidate>(model);
+        var result = await _candidateRepository.CreateAsync(mappedModel);
+
+        return _mapper.Map<CandidateDto>(result);
     }
 
-    public async ValueTask<bool> DeleteProductAsync(long id)
+    public async ValueTask<bool> DeleteCandidateAsync(long id)
     {
-        throw new NotImplementedException();
+        var model = await _candidateRepository.GetAsync(x => x.Id == id);
+        if (model is null)
+            throw new CustomException(404, "candidate_not_found");
+
+        await _candidateRepository.DeleteAsync(id);
+        return true;
     }
 
-    public async ValueTask<CandidateDto?> GetProductAsync(long id)
+    public async ValueTask<IEnumerable<CandidateDto>> GetAllCandidatessAsync()
     {
-        throw new NotImplementedException();
+        var models = await _candidateRepository.GetAll(null!).ToListAsync();
+        return _mapper.Map<IEnumerable<CandidateDto>>(models);
     }
 
-    public async ValueTask<IEnumerable<CandidateDto>> GetProductsAsync()
+    public async ValueTask<CandidateDto?> GetCandidatetAsync(long id)
     {
-        throw new NotImplementedException();
+        var model = await _candidateRepository.GetAsync(x =>  id == x.Id);
+        if (model is null)
+            throw new CustomException(404, "candidate_not_found");
+
+        return _mapper.Map<CandidateDto>(model);
     }
 
-    public async ValueTask<CandidateDto> UpdateProductAsync(CandidateUpdateDto product)
+    public async ValueTask<CandidateDto> UpdateCandidateAsync(CandidateUpdateDto dto)
     {
-        throw new NotImplementedException();
+        var model = await _candidateRepository.GetAsync(x => x.Id == dto.Id);
+        if (model is null)
+            throw new CustomException(404, "candidate_not_found");
+
+        var mappedModel = _mapper.Map<Candidate>(dto);
+        var result =  _candidateRepository.Update(mappedModel);
+
+        return _mapper.Map<CandidateDto>(result);
     }
 }
