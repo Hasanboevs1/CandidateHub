@@ -4,6 +4,7 @@ using CandidateHub.Domain.Entities;
 using CandidateHub.Service.DTOs.Candidate;
 using CandidateHub.Service.Exceptions;
 using CandidateHub.Service.Services;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using System.Linq.Expressions;
 
@@ -14,12 +15,14 @@ public class CandidateServiceTests
     private readonly Mock<IRepository<Candidate>> _mockRepository;
     private readonly Mock<IMapper> _mockMapper;
     private readonly CandidateService _candidateService;
+    private readonly Mock<IMemoryCache> _mockCache;
 
     public CandidateServiceTests()
     {
         _mockRepository = new Mock<IRepository<Candidate>>();
         _mockMapper = new Mock<IMapper>();
-        _candidateService = new CandidateService(_mockRepository.Object, _mockMapper.Object);
+        _mockCache = new Mock<IMemoryCache>();
+        _candidateService = new CandidateService(_mockRepository.Object, _mockMapper.Object, _mockCache.Object);
     }
 
     [Fact]
