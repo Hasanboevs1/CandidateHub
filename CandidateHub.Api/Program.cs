@@ -25,6 +25,8 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
+builder.Services.AddSwaggerDoc();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
