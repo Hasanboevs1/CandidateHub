@@ -18,4 +18,5 @@ public static class ServiceExtensions
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICandidateService, CandidateService>();
     }
+
 }

@@ -2,6 +2,7 @@ using CandidateHub.Api.Extensions;
 using CandidateHub.Data.Contexts;
 using CandidateHub.Service.Mappers;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,14 @@ builder.Services.AddCustomContext();
 
 builder.Services.AddCustomServices();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
 
