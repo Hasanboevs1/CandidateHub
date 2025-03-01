@@ -1,5 +1,6 @@
 ﻿using CandidateHub.Domain.Entities;
 using CandidateHub.Service.DTOs.Candidate;
+using CandidateHub.Service.Exceptions;
 using CandidateHub.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,12 +70,37 @@ public class CandidateController : ControllerBase
     /// <response code="404">If no candidate is found with the given ID.</response>
     /// <response code="500">If there is an internal server error.</response>
     [HttpPut("{id:long}")]
-    [ProducesResponseType(typeof(Candidate), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(CandidateDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UpdateCandidateAsync(long id, [FromBody] CandidateUpdateDto dto)
-        => Ok(await _candidateService.UpdateCandidateAsync(id, dto));
+    {
+        try
+        {
+            var result = await _candidateService.UpdateCandidateAsync(id, dto);
+            return Ok(result);
+        }
+        catch (CustomException ex)
+        {
+            if (ex.StatusCode == 400)
+            {
+                return BadRequest(new ProblemDetails { Status = ex.StatusCode, Title = ex.Message });
+            }
+            else if (ex.StatusCode == 404)
+            {
+                return NotFound(new ProblemDetails { Status = ex.StatusCode, Title = ex.Message });
+            }
+            else
+            {
+                return StatusCode(ex.StatusCode, new ProblemDetails { Status = ex.StatusCode, Title = ex.Message });
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new ProblemDetails { Status = 500, Title = "Internal Server Error" });
+        }
+    }
 
     /// <summary>
     /// Deletes a candidate from the system.
