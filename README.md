@@ -39,13 +39,7 @@ public interface IRepository<T> where T : class
 
 1️⃣ API Endpoints
 
-Users: Register/Login, Manage Profiles
-
-Posts: Create, Update, Delete, Fetch
-
-Comments: Add, Edit, Remove
-
-Categories: Filter, Search
+Candidates: Create, Update, Delete, Get
 
 2️⃣ Database Strategy
 
@@ -53,7 +47,6 @@ Entity Framework Core with Code First Migrations
 
 Seeding Data using IEntityTypeConfiguration
 
-One-to-Many & Many-to-Many Relationships
 
 3️⃣ Performance Optimization
 
@@ -64,8 +57,6 @@ One-to-Many & Many-to-Many Relationships
 4️⃣ Unit Testing & Integration Tests
 
 ✅ XUnit, Moq, FluentAssertions for unit testing services and repositories.
-✅ Jest, React Testing Library for frontend unit testing.
-✅ Postman/Newman for automated API testing.
 
 Example:
 
@@ -102,8 +93,6 @@ app.UseHealthChecks("/health");
 6️⃣ Self-Deploying Mechanism
 
 ✅ Docker - Containerized API using Docker.
-✅ CI/CD Pipeline - GitHub Actions for automated deployment.
-✅ Kubernetes - Orchestrating services in production.
 
 Example Dockerfile:
 
@@ -111,7 +100,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 COPY . /app
 WORKDIR /app
 EXPOSE 80
-CMD ["dotnet", "Mango.Blog.dll"]
 
 🛠️ Installation & Setup
 
@@ -119,7 +107,7 @@ Prerequisites
 
 .NET 8 SDK
 
-SQL Server
+SQLITE
 
 Docker (Optional for containerization)
 
@@ -127,7 +115,7 @@ Setup Steps
 
 1️⃣ Clone the repository:
 
-git clone https://github.com/yourrepo/mango-blog.git && cd mango-blog
+git clone https://github.com/Hasanboevs1/CandidateHub.git && cd CandidateHub
 
 2️⃣ Install dependencies:
 
@@ -144,7 +132,6 @@ dotnet run
 🎯 Git & Commit Strategy
 
 ✅ Main Branch - Stable Production-Ready Code.
-✅ Feature Branches - New features and bug fixes.
 ✅ Pull Requests - Code reviews before merging.
 
 Example Commit Message:
@@ -156,7 +143,6 @@ git commit -m "✨ Added rate limiting to prevent abuse"
 Swagger is enabled for easy API testing:
 
 app.UseSwagger();
-app.UseSwaggerUI();
 
 Visit: http://localhost:5000/swagger
 
